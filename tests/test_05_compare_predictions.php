@@ -18,6 +18,10 @@ if (!class_exists('BigML\Model')) {
    include '../bigml/model.php';
 }
 
+if (!class_exists('BigML\Ensemble')) {
+   include '../bigml/ensemble.php';
+}
+
 if (!class_exists('BigML\LogisticRegression')) {
   include  '../bigml/logistic.php';
 }
@@ -27,6 +31,7 @@ use BigML\BigMLRequest;
 use BigML\Cluster;
 use BigML\Anomaly;
 use BigML\Model;
+use BigML\Ensemble;
 use BigML\LogisticRegression;
 
 class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
@@ -56,13 +61,13 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
     public function test_scenario1() {
 
         $data = array(array("filename" => "data/iris.csv",
-	 		    "data_input" => array("petal width"=> 0.5),
-			    "objective"=> '000004',
-			    "prediction" => "Iris-setosa"),
-		      array("filename" => 'data/iris.csv',
-		            "data_input" => array("petal length" => 6, "petal width"=> 2),
-			    "objective" => '000004',
-			    "prediction" => 'Iris-virginica'),
+                 "data_input" => array("petal width"=> 0.5),
+                "objective"=> '000004',
+                "prediction" => "Iris-setosa"),
+              array("filename" => 'data/iris.csv',
+                    "data_input" => array("petal length" => 6, "petal width"=> 2),
+                "objective" => '000004',
+                "prediction" => 'Iris-virginica'),
                       array("filename" => 'data/iris.csv',
                             "data_input" => array('petal length' => 4, '"petal width' => 1.5),
                             "objective" => '000004',
@@ -105,8 +110,8 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
             $localmodel = new Model($model->resource, self::$api);
 
             print "When I create a prediction for " . json_encode($item["data_input"]) . "\n";
-	    $prediction = self::$api->create_prediction($model, $item["data_input"]);
-	    $this->assertEquals(BigMLRequest::HTTP_CREATED, $prediction->code);
+            $prediction = self::$api->create_prediction($model, $item["data_input"]);
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $prediction->code);
 
             print "Then the prediction for " . $item["objective"] . " is " . $item["prediction"];
             $this->assertEquals($item["prediction"], $prediction->object->prediction->{$item["objective"]});
@@ -114,7 +119,7 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
             print "And I create a local prediction for " . json_encode($item["data_input"]) . "\n";
             $prediction = $localmodel->predict($item["data_input"]);
 
-	    print "Then the local prediction is " . $item["prediction"] . "\n";
+            print "Then the local prediction is " . $item["prediction"] . "\n";
             $this->assertEquals($prediction->output, $item["prediction"]);
 
         }
@@ -126,29 +131,29 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
     public function test_scenario2() {
        $data = array(array("filename" => "data/spam.csv",
                            "options" => array("fields" => array("000001" => array("optype" => "text",
-										  "term_analysis" => array("case_sensitive" => true,
-													   "stem_words" => true,
-													   "use_stopwords"=> false,
-													   "language" => "en")))),
-			   "data_input" => array("Message" => "Mobile call"),
-			   "objective" => "000000",
-			   "prediction" => "ham"),
+                                          "term_analysis" => array("case_sensitive" => true,
+                                                       "stem_words" => true,
+                                                       "use_stopwords"=> false,
+                                                       "language" => "en")))),
+               "data_input" => array("Message" => "Mobile call"),
+               "objective" => "000000",
+               "prediction" => "ham"),
                      array("filename" => "data/spam.csv",
                            "options" => array("fields" => array("000001" => array("optype" => "text",
-			   							  "term_analysis" => array("case_sensitive" => true,
-										  	                   "stem_words" => true,
-													   "use_stopwords"=> false,
-													   "language" => "en")))),
+                                             "term_analysis" => array("case_sensitive" => true,
+                                                                 "stem_words" => true,
+                                                       "use_stopwords"=> false,
+                                                       "language" => "en")))),
                            "data_input" => array("Message" => "A normal message"),
                            "objective" => "000000",
                            "prediction" => "ham"),
-	             array("filename" => "data/spam.csv",
+                 array("filename" => "data/spam.csv",
                            "options" => array("fields" => array("000001" => array("optype" => "text", "term_analysis" => array("case_sensitive" => false, "stem_words" => false, "use_stopwords"=> false,"language" => "en")))),
                            "data_input" => array("Message" => "Mobile calls"),
-		     	   "objective" => "000000",
-		     	   "prediction" => "spam",
-		          ),
-		     array("filename" => "data/spam.csv",
+                    "objective" => "000000",
+                    "prediction" => "spam",
+                  ),
+             array("filename" => "data/spam.csv",
                            "options" => array("fields" => array("000001" => array("optype" => "text", "term_analysis" => array("case_sensitive" => false, "stem_words" => false, "use_stopwords"=> false,"language" => "en")))),
                            "data_input" => array("Message" => "A normal message"),
                            "objective" => "000000",
@@ -178,22 +183,22 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
                            "objective" => "000000",
                            "prediction" => "ham",
                           ),
-		      array("filename" => "data/movies.csv",
-		            "options" => array("fields" => array("000007" => array("optype"=> "items", "item_analysis" => array("separator" => "\$")))),
-			    "data_input" => array("genres" => "Adventure\$Action", "timestamp" => 993906291, "occupation" => "K-12 student"),
-			    "objective" => "000009",
-			    "prediction" => 3.93064
-		           ),
-		      array("filename"=> "data/text_missing.csv",
-		            "options" => array("fields" => array("000001" => array("optype" => "text", "term_analysis" => array("token_mode" => "all", "language" => "en")), "000000" => array("optype" => "text", "term_analysis" => array("token_mode" => "all", "language" => "en" )))),
-			    "data_input" => array(),
-			    "objective" => "000003",
-			    "prediction" => "swap"
-		           )
-		     );
+              array("filename" => "data/movies.csv",
+                    "options" => array("fields" => array("000007" => array("optype"=> "items", "item_analysis" => array("separator" => "\$")))),
+                "data_input" => array("genres" => "Adventure\$Action", "timestamp" => 993906291, "occupation" => "K-12 student"),
+                "objective" => "000009",
+                "prediction" => 3.93064
+                   ),
+              array("filename"=> "data/text_missing.csv",
+                    "options" => array("fields" => array("000001" => array("optype" => "text", "term_analysis" => array("token_mode" => "all", "language" => "en")), "000000" => array("optype" => "text", "term_analysis" => array("token_mode" => "all", "language" => "en" )))),
+                "data_input" => array(),
+                "objective" => "000003",
+                "prediction" => "swap"
+                   )
+             );
 
        foreach($data as $item) {
-	    print "Given I create a data source uploading a ". $item["filename"]. " file\n";
+            print "Given I create a data source uploading a ". $item["filename"]. " file\n";
             $source = self::$api->create_source($item["filename"], $options=array('name'=>'local_test_source', 'project'=> self::$project->resource));
             $this->assertEquals(BigMLRequest::HTTP_CREATED, $source->code);
             $this->assertEquals(1, $source->object->status->code);
@@ -247,10 +252,10 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
     public function test_scenario3() {
         $data = array(array("filename" => "data/iris.csv",
                                "data_input" => array(),
-			       "objective" => "000004",
-			       "prediction" => "Iris-setosa",
-			       "confidence" => 0.2629),
-	              array("filename" => "data/grades.csv",
+                   "objective" => "000004",
+                   "prediction" => "Iris-setosa",
+                   "confidence" => 0.2629),
+                  array("filename" => "data/grades.csv",
                                "data_input" => array(),
                                "objective" => "000005",
                                "prediction" => "68.62224",
@@ -267,7 +272,7 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
                                "confidence" => 25.65806));
 
         foreach($data as $item) {
-	    print "\nSuccessfully comparing predictions with proportional missing strategy\n";
+        print "\nSuccessfully comparing predictions with proportional missing strategy\n";
             print "Given I create a data source uploading a ". $item["filename"]. " file\n";
             $source = self::$api->create_source($item["filename"], $options=array('name'=>'local_test_source', 'project'=> self::$project->resource));
             $this->assertEquals(BigMLRequest::HTTP_CREATED, $source->code);
@@ -308,29 +313,29 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
             $prediction = $localmodel->predict($item["data_input"], true, false, STDOUT, true, 1);
 
             print "Then the local prediction is  " . $item["prediction"] . "\n";
-	    $prediction_value = null;
-	    $confidence_value = null;
-	    if (is_object($prediction)) {
-	       $prediction_value = $prediction->prediction;
-	       $confidence_value = $prediction->confidence;
-	    } else {
-               $prediction_value = $prediction[0];
-               $confidence_value = $prediction[1];
-	    }
+            $prediction_value = null;
+            $confidence_value = null;
+            if (is_object($prediction)) {
+               $prediction_value = $prediction->prediction;
+               $confidence_value = $prediction->confidence;
+            } else {
+                   $prediction_value = $prediction[0];
+                   $confidence_value = $prediction[1];
+            }
 
             $this->assertEquals(is_numeric($prediction_value) ? round($prediction_value, 5) : $prediction_value, $item["prediction"]);
-	    print "And the local prediction's confidence is " . $item["confidence"]. "\n";
-	    $this->assertEquals(round($confidence_value, 3), round($item["confidence"], 3));
+            print "And the local prediction's confidence is " . $item["confidence"]. "\n";
+            $this->assertEquals(round($confidence_value, 3), round($item["confidence"], 3));
         }
     }
 
     public function test_scenario4() {
      $data = array(array("filename" => "data/spam.csv",
                                "options" => array("fields" => array("000001" => array("optype" => "text",
-                                  						      "term_analysis" => array("case_sensitive" => true,
-													       "stem_words"=> true,
-													       "use_stopwords"=>false,
-													       "language"=> "en")))),
+                                                                "term_analysis" => array("case_sensitive" => true,
+                                                           "stem_words"=> true,
+                                                           "use_stopwords"=>false,
+                                                           "language"=> "en")))),
                                "data_input" => array("Type" => "ham", "Message" => "Mobile call"),
                                "centroid" => "Cluster 7",
                                "distance" => 0.36637),
@@ -348,7 +353,7 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
                                                                                       "term_analysis" => array("case_sensitive" => false,
                                                                                                                "stem_words"=> false,
                                                                                                                "use_stopwords"=>false,
-													       "language"=>"en"
+                                                           "language"=>"en"
                                                                                                                )))),
                                "data_input" => array("Type" => "ham", "Message" => "Mobile calls"),
                                "centroid" => "Cluster 0",
@@ -402,8 +407,8 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
                     array("filename" => "data/spam.csv",
                                "options" => array("fields" => array("000001" => array("optype" => "text",
                                                                                       "term_analysis" => array("case_sensitive" => true,
-													       "stem_words"=> true,
-     													       "use_stopwords"=>false,
+                                                           "stem_words"=> true,
+                                                                "use_stopwords"=>false,
                                                                                                                "language"=>"en"
                                                                                                                )))),
                                "data_input" => array("Type" => "", "Message" => ""),
@@ -422,12 +427,12 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
                                                      "sépal&width" => 2, "spécies"=> "Iris-setosa"),
                                "centroid" => "Cluster 7",
                                "distance" => 0.8752380218327035),
-	             array("filename" => "data/movies.csv",
-		           "options" => array("fields" => array("000007" => array("optype" => "items", "item_analysis" => array("separator" => "\$")))),
-			   "data_input" => array("gender" => "Female", "age_range" => "18-24", "genres" => "Adventure\$Action", "timestamp" => 993906291, "occupation"=>"K-12 student", "zipcode" => 59583, "rating" => 3),
-			   "centroid" => "Cluster 1",
-			   "distance" => 0.7294650227133437)
-		          );
+                 array("filename" => "data/movies.csv",
+                   "options" => array("fields" => array("000007" => array("optype" => "items", "item_analysis" => array("separator" => "\$")))),
+               "data_input" => array("gender" => "Female", "age_range" => "18-24", "genres" => "Adventure\$Action", "timestamp" => 993906291, "occupation"=>"K-12 student", "zipcode" => 59583, "rating" => 3),
+               "centroid" => "Cluster 1",
+               "distance" => 0.7294650227133437)
+                  );
 
       foreach($data as $key=>$item) {
             print "\n Successfully comparing centroids with or without text options\n";
@@ -533,7 +538,7 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
       $data = array(array('filename'=> 'data/iris_missing2.csv', 'data_input' => array("petal width"=> 1),
                           'objective'=> '000004', 'prediction' => 'Iris-setosa', 'confidence' => 0.8064 ),
                     array('filename'=> 'data/iris_missing2.csv', 'data_input' => array("petal width"=> 1,  "petal length" => 4),
-		          'objective'=> '000004', 'prediction' => 'Iris-versicolor', 'confidence' => 0.7847 ));
+                  'objective'=> '000004', 'prediction' => 'Iris-versicolor', 'confidence' => 0.7847 ));
 
       foreach($data as $item) {
           print "\nSuccessfully comparing predictions with proportional missing strategy for missing_splits models\n";
@@ -577,15 +582,15 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
           $local_prediction = $local_model->predict($item["data_input"], true, false, STDOUT, true, 1);
 
           $confidence_value = null;
-	  $prediction_value = null;
+          $prediction_value = null;
 
-	  if (is_object($local_prediction)) {
-             $prediction_value  = $local_prediction->output;
-	     $confidence_value = $local_prediction->confidence;
-	  } else {
-	     $prediction_value = $local_prediction[0];
-	     $confidence_value = $local_prediction[1];
-	  }
+          if (is_object($local_prediction)) {
+                 $prediction_value  = $local_prediction->output;
+             $confidence_value = $local_prediction->confidence;
+          } else {
+             $prediction_value = $local_prediction[0];
+             $confidence_value = $local_prediction[1];
+          }
 
 
           print "Then the local prediction is " . $item["prediction"] . "\n";
@@ -633,12 +638,12 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
           $anomaly_score = self::$api->create_anomaly_score($anomaly->resource, $item["data_input"]);
           $this->assertEquals(BigMLRequest::HTTP_CREATED, $anomaly_score->code);
 
-	  print "Then the anomaly score is " . $item['score'] . "\n";
+          print "Then the anomaly score is " . $item['score'] . "\n";
           $this->assertEquals(round($item['score'], 5), round($anomaly_score->object->score,5));
 
           print "And I create a local anomaly score for " . json_encode($item["data_input"]) . "\n";
           $local_anomaly_score = $local_anomaly->anomaly_score($item["data_input"], false);
-	  print "Then the local anomaly score is " . $item['score'] . "\n";
+          print "Then the local anomaly score is " . $item['score'] . "\n";
           $this->assertEquals(round($item['score'], 5), round($local_anomaly_score,5));
 
       }
@@ -647,8 +652,8 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
     public function test_scenario8() {
        $data = array(array('filename' => 'data/iris.csv',
                            'data_input' => array("petal width" => 0.5, "petal length"=> 0.5, "sepal width" => 0.5, "sepal length"=>0.5),
-			   'prediction' => 'Iris-versicolor'),
-		     array('filename' => 'data/iris.csv',
+               'prediction' => 'Iris-versicolor'),
+             array('filename' => 'data/iris.csv',
                            'data_input' => array("petal width" => 2, "petal length" => 6, "sepal width" => 0.5, "sepal length" => 0.5),
                            'prediction' => 'Iris-versicolor'),
                      array('filename' => 'data/iris.csv',
@@ -660,10 +665,10 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
                      array('filename' => 'data/iris_sp_chars.csv',
                            'data_input' => array("pétal.length" => 4, "pétal&width".json_decode('"'.'\u0000'.'"') => 1.5, "sépal&width" => 0.5, "sépal.length" => 0.5),
                            'prediction' => 'Iris-versicolor'),
-		     array('filename' => 'data/price.csv',
-		           'data_input' => array("Price" => 1200),
-			   'prediction' => 'Product1')
-   	             );
+             array('filename' => 'data/price.csv',
+                   'data_input' => array("Price" => 1200),
+               'prediction' => 'Product1')
+                    );
        foreach($data as $item) {
           print "\nSuccessfully comparing logistic regression predictions\n";
           print "Given I create a data source uploading a ". $item["filename"]. " file\n";
@@ -717,11 +722,11 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
 
     public function test_scenario9() {
         $data = array(array("filename" => "data/spam.csv",
-	                    "options"=> array("fields" => array("000001" => array("optype"=> "text",
-			                                                          "term_analysis"=> array("case_sensitive"=> true, "stem_words" => true,
-										                          "use_stopwords" => false, "language" => "en")))),
-			    "data_input" => array("Message" => "Mobile call"),
-			    "prediction" => 'ham'),
+                        "options"=> array("fields" => array("000001" => array("optype"=> "text",
+                                                                      "term_analysis"=> array("case_sensitive"=> true, "stem_words" => true,
+                                                                  "use_stopwords" => false, "language" => "en")))),
+                "data_input" => array("Message" => "Mobile call"),
+                "prediction" => 'ham'),
                       array("filename" => "data/spam.csv",
                             "options"=> array("fields" => array("000001" => array("optype"=> "text",
                                                                                   "term_analysis"=> array("case_sensitive"=> true, "stem_words" => true,
@@ -778,7 +783,7 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
            $this->assertEquals(BigMLRequest::FINISHED, $resource["status"]);
 
            print "And I update the source with params " . json_encode($item["options"]) . "\n";
-	   $source = self::$api->update_source($source->resource, $item["options"]);
+           $source = self::$api->update_source($source->resource, $item["options"]);
 
            print "And I create dataset with local source\n";
            $dataset = self::$api->create_dataset($source->resource);
@@ -966,19 +971,19 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
          $this->assertEquals($item["prediction"], $prediction->object->prediction->{$item["objective"]});
 
          print "And I create a local model\n";
-	 $localmodel = new Model($model->resource, self::$api);
+         $localmodel = new Model($model->resource, self::$api);
 
          print "And I create a proportional missing strategy local prediction for ". json_encode($item["data_input"]) . "\n";
          $local_prediction = $localmodel->predict($item["data_input"], true, false, STDOUT, true, 1);
 
-	 if (is_object($local_prediction)) {
-           $prediction_value  = $local_prediction->output;
-	 } else {
-	   $prediction_value = $local_prediction[0];
-	 }
+         if (is_object($local_prediction)) {
+               $prediction_value  = $local_prediction->output;
+         } else {
+           $prediction_value = $local_prediction[0];
+         }
 
          print "Then the local prediction is " . $item["prediction"] . "\n";
-	 $this->assertEquals($prediction_value, $item["prediction"]);
+         $this->assertEquals($prediction_value, $item["prediction"]);
 
        }
 
@@ -1076,16 +1081,16 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
     public function test_scenario13() {
        $data = array(array('filename' => 'data/iris_unbalanced.csv',
                            'data_input' => array(),
-			   'objective' => '000004',
-			   'prediction' => 'Iris-setosa',
-			   'confidence' => 0.25284,
+               'objective' => '000004',
+               'prediction' => 'Iris-setosa',
+               'confidence' => 0.25284,
                           ),
                      array('filename' => 'data/iris_unbalanced.csv',
-		           'data_input' => array('petal length' => 1, 'sepal length' => 1, 'petal width' => 1, 'sepal width' => 1),
-			   'objective' => '000004',
-			   'prediction' => 'Iris-setosa',
-			   'confidence' => 0.7575
-		          )
+                   'data_input' => array('petal length' => 1, 'sepal length' => 1, 'petal width' => 1, 'sepal width' => 1),
+               'objective' => '000004',
+               'prediction' => 'Iris-setosa',
+               'confidence' => 0.7575
+                  )
                     );
        foreach($data as $item) {
 
@@ -1273,5 +1278,129 @@ class BigMLTestComparePredictions extends PHPUnit_Framework_TestCase
            print "And the local logistic regression probability for the prediction is " . $item["probability"] . "\n";
            $this->assertEquals(round($local_prediction["probability"], 4), round($item["probability"], 4));
        }
+    }
+
+    public function test_scenario15() {
+
+        $data = array(array("filename" => "data/iris.csv",
+                 "data_input" => array("petal length"=> 0.5),
+                 "objective"=> '000004',
+                 "prediction" => 'Iris-setosa'),
+                array("filename" => 'data/iris.csv',
+                    "data_input" => array("petal length" => 6, "petal width"=> 2),
+                                          "objective" => '000004',
+                                          "prediction" => 'Iris-virginica'),
+                      array("filename" => 'data/iris.csv',
+                            "data_input" => array('petal length' => 4, 'petal width' => 1.5),
+                            "objective" => '000004',
+                            "prediction" => 'Iris-versicolor'),
+                      array("filename" => 'data/iris_sp_chars.csv',
+                            "data_input" => array('pétal.length' => 4, 'pétal&width' => 1.5),
+                            "objective" => '000004',
+                            "prediction" => 'Iris-versicolor'));
+
+        foreach($data as $item) {
+            print "\nSuccessfully comparing predictions:\n";
+
+            print "Given I create a data source uploading a ". $item["filename"]. " file\n";
+            $source = self::$api->create_source($item["filename"], $options=array('name'=>'local_test_source', 'project'=> self::$project->resource));
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $source->code);
+            $this->assertEquals(1, $source->object->status->code);
+
+            print "And I wait until the source is ready\n";
+            $resource = self::$api->_check_resource($source->resource, null, 10000, 30);
+            $this->assertEquals(BigMLRequest::FINISHED, $resource["status"]);
+
+            print "And I create dataset with local source\n";
+            $dataset = self::$api->create_dataset($source->resource);
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $dataset->code);
+            $this->assertEquals(BigMLRequest::QUEUED, $dataset->object->status->code);
+
+            print "And I wait until the dataset is ready\n";
+            $resource = self::$api->_check_resource($dataset->resource, null, 10000, 30);
+            $this->assertEquals(BigMLRequest::FINISHED, $resource["status"]);
+
+            print "And I create ensemble\n";
+            $args = array("ensemble_sample"=>array("seed"=>"BigML"));
+            $model = self::$api->create_ensemble($dataset->resource, $args);
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $model->code);
+
+            print "And I wait until the model is ready\n";
+            $resource = self::$api->_check_resource($model->resource, null, 10000, 30);
+            $this->assertEquals(BigMLRequest::FINISHED, $resource["status"]);
+
+            print "And I create a local model " . $model->resource . "\n";
+            $localmodel = new Ensemble($model->resource, self::$api);
+
+            print "When I create a prediction for " . json_encode($item["data_input"]) . "\n";
+            $prediction = self::$api->create_prediction($model, $item["data_input"]);
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $prediction->code);
+
+            print "Then the prediction for " . $item["objective"] . " is " . $item["prediction"];
+            $this->assertEquals($item["prediction"], $prediction->object->output);
+
+            print "And I create a local prediction for " . json_encode($item["data_input"]) . "\n";
+            $prediction = $localmodel->predict($item["data_input"]);
+
+            print "Then the local prediction is " . $item["prediction"] . "\n";
+            $this->assertEquals($prediction, $item["prediction"]);
+
+        }
+    }
+
+    public function test_scenario16() {
+
+        $data = array(array("filename" => "data/iris.csv",
+                 "data_input" => array("species"=> 'Iris-setosa'),
+                 "objective"=> '000000',
+                 "prediction" => 5.8178));
+
+        foreach($data as $item) {
+            print "\nSuccessfully comparing predictions:\n";
+
+            print "Given I create a data source uploading a ". $item["filename"]. " file\n";
+            $source = self::$api->create_source($item["filename"], $options=array('name'=>'local_test_source', 'project'=> self::$project->resource));
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $source->code);
+            $this->assertEquals(1, $source->object->status->code);
+
+            print "And I wait until the source is ready\n";
+            $resource = self::$api->_check_resource($source->resource, null, 10000, 30);
+            $this->assertEquals(BigMLRequest::FINISHED, $resource["status"]);
+
+            print "And I create dataset with local source\n";
+            $dataset = self::$api->create_dataset($source->resource);
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $dataset->code);
+            $this->assertEquals(BigMLRequest::QUEUED, $dataset->object->status->code);
+
+            print "And I wait until the dataset is ready\n";
+            $resource = self::$api->_check_resource($dataset->resource, null, 10000, 30);
+            $this->assertEquals(BigMLRequest::FINISHED, $resource["status"]);
+
+            print "And I create ensemble\n";
+            $args = array("objective_field"=>$item["objective"], "ensemble_sample"=>array("seed"=>"BigML"));
+            $model = self::$api->create_ensemble($dataset->resource, $args);
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $model->code);
+
+            print "And I wait until the model is ready\n";
+            $resource = self::$api->_check_resource($model->resource, null, 10000, 30);
+            $this->assertEquals(BigMLRequest::FINISHED, $resource["status"]);
+
+            print "And I create a local model " . $model->resource . "\n";
+            $localmodel = new Ensemble($model->resource, self::$api);
+
+            print "When I create a prediction for " . json_encode($item["data_input"]) . "\n";
+            $prediction = self::$api->create_prediction($model, $item["data_input"]);
+            $this->assertEquals(BigMLRequest::HTTP_CREATED, $prediction->code);
+
+            print "Then the prediction for " . $item["objective"] . " is " . $item["prediction"];
+            $this->assertEquals(round($item["prediction"], 4), round($prediction->object->output, 4));
+
+            print "And I create a local prediction for " . json_encode($item["data_input"]) . "\n";
+            $prediction = $localmodel->predict($item["data_input"]);
+
+            print "Then the local prediction is " . $item["prediction"] . "\n";
+            $this->assertEquals(round($prediction, 4), round($item["prediction"], 4));
+
+        }
     }
 }

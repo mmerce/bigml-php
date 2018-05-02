@@ -130,7 +130,7 @@ class Ensemble {
       $this->class_names = null;
       $number_of_models = count($models);
       $this->models_splits = array();
-      
+
       if ($this->fields[$this->objective_id]->optype == 'numeric') {
           $this->regression = true;
       } else {
@@ -328,16 +328,16 @@ class Ensemble {
       return $result;
    }
 
-   function predict_probability($input_data, $by_name=true, $method=MultiVote::PROBABILITY_CODE, 
+   function predict_probability($input_data, $by_name=true, $method=MultiVote::PROBABILITY_CODE,
                     $missing_strategy=Tree::LAST_PREDICTION, $compact=false) {
- 
+
          // For classification models, predicts a probability for
          // each possible output class, based on input values.  The input
          // fields must be a dictionary keyed by field name or field ID.
- 
+
          // For regressions, the output is a single element list
          // containing the prediction.
- 
+
          // :param input_data: Input data to be predicted
          // :param by_name: Boolean that is set to True if field_names (as
          //                 alternative to field ids) are used in the
