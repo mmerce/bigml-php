@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 
 include 'test_utils.php';
 
@@ -29,7 +31,7 @@ use BigML\Anomaly;
 use BigML\Model;
 use BigML\LogisticRegression;
 
-class BigMLTestComparePredictionsC extends PHPUnit_Framework_TestCase
+class BigMLTestComparePredictionsC extends TestCase
 {
     protected static $username; # "you_username"
     protected static $api_key; # "your_api_key"

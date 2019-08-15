@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 
 include 'test_utils.php';
 
@@ -14,7 +16,7 @@ use BigML\BigML;
 use BigML\BigMLRequest;
 use BigML\MultiModel;
 
-class BigMLTestMultiModel extends PHPUnit_Framework_TestCase
+class BigMLTestMultiModel extends TestCase
 {
     protected static $username; # "you_username"
     protected static $api_key; # "your_api_key"

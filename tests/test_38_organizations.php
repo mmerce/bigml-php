@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 
 include('test_utils.php');
 
@@ -9,7 +11,7 @@ if (!class_exists('bigml')) {
 use BigML\BigML;
 use BigML\BigMLRequest;
 
-class BigMLTestOrganizations extends PHPUnit_Framework_TestCase
+class BigMLTestOrganizations extends TestCase
 {
     protected static $api;
     protected static $api_org;

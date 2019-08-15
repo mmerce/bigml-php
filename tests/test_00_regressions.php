@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 
 include 'test_utils.php';
 
@@ -14,7 +16,7 @@ use BigML\BigML;
 use BigML\BigMLRequest;
 use BigML\BaseModel;
 
-class BigMLTestCompareRegressions extends PHPUnit_Framework_TestCase
+class BigMLTestCompareRegressions extends TestCase
 {
     protected static $api;
     protected static $project;

@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 
 include 'test_utils.php';
 
@@ -13,7 +15,7 @@ use BigML\BigML;
 use BigML\BigMLRequest;
 use BigML\Fields;
 
-class BigMLTestMissingErrors extends PHPUnit_Framework_TestCase
+class BigMLTestMissingErrors extends TestCase
 {
     protected static $username; # "you_username"
     protected static $api_key; # "your_api_key"

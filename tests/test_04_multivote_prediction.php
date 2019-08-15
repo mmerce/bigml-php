@@ -1,4 +1,6 @@
 <?php
+use PHPUnit\Framework\TestCase;
+
 
 include 'test_utils.php';
 
@@ -12,7 +14,7 @@ if (!class_exists('BigML\MultiVote')) {
 use BigML\BigML;
 use BigML\MultiVote;
 
-class BigMLTestMultiVote extends PHPUnit_Framework_TestCase
+class BigMLTestMultiVote extends TestCase
 {
     protected static $username; # "you_username"
     protected static $api_key; # "your_api_key"
