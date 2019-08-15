@@ -24,7 +24,7 @@ class BigMLTestDeepnetsC extends TestCase
    protected static $api;
    protected static $project;
 
-   public static function setUpBeforeClass() {
+   public static function setUpBeforeClass(): void {
       print __FILE__;
       self::$api =  new BigML(self::$username, self::$api_key, false);
       ini_set('memory_limit', '5120M');
@@ -33,7 +33,7 @@ class BigMLTestDeepnetsC extends TestCase
       self::$project=self::$api->create_project(array('name'=> $test_name));
    }
 
-   public static function tearDownAfterClass() {
+   public static function tearDownAfterClass(): void {
       self::$api->delete_all_project_by_name(basename(preg_replace('/\.php$/', '', __FILE__)));
    }
 
