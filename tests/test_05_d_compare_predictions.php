@@ -60,8 +60,13 @@ class BigMLTestComparePredictionsD extends TestCase
 													       "use_stopwords"=>false,
 													       "language"=> "en")))),
                                "data_input" => array("Type" => "ham", "Message" => "Mobile call"),
-                               "centroid" => "Cluster 7",
-                               "distance" => 0.36637),
+                               "centroid" => "Cluster 0",
+                               "distance" => 0.25),
+	             array("filename" => "data/movies.csv",
+		           "options" => array("fields" => array("000007" => array("optype" => "items", "item_analysis" => array("separator" => "\$")))),
+			   "data_input" => array("gender" => "Female", "age_range" => "18-24", "genres" => "Adventure\$Action", "timestamp" => 993906291, "occupation"=>"K-12 student", "zipcode" => 59583, "rating" => 3),
+			   "centroid" => "Cluster 3",
+			   "distance" => 0.62852),
                     array("filename" => "data/spam.csv",
                                "options" => array("fields" => array("000001" => array("optype" => "text",
                                                                                       "term_analysis" => array("case_sensitive" => true,
@@ -99,8 +104,32 @@ class BigMLTestComparePredictionsD extends TestCase
                                                                                                                "language"=>"en"
                                                                                                                )))),
                                "data_input" => array("Type" => "ham", "Message" => "Mobile call"),
+                               "centroid" => "Cluster 1",
+                               "distance" => 0.34189),
+                   array("filename" => "data/spam.csv",
+                               "options" => array("fields" => array("000001" => array("optype" => "text",
+                                                                                      "term_analysis" => array("case_sensitive" => false,
+                                                                                                               "stem_words"=> false,
+                                                                                                               "use_stopwords"=>false,
+                                                                                                               "language"=>"en"
+                                                                                                               )))),
+                               "data_input" => array("Type" => "ham", "Message" => "A normal Message"),
                                "centroid" => "Cluster 0",
                                "distance" => 0.5),
+
+
+                   array("filename" => "data/spam.csv",
+                               "options" => array("fields" => array("000001" => array("optype" => "text",
+                                                                                      "term_analysis" => array("case_sensitive" => false,
+                                                                                                               "stem_words"=> true,
+                                                                                                               "use_stopwords"=>true,
+                                                                                                               "language"=>"en"
+                                                                                                               )))),
+                               "data_input" => array("Type" => "ham", "Message" => "Mobile call"),
+                               "centroid" => "Cluster 1",
+                               "distance" => 0.34189),
+
+
                     array("filename" => "data/spam.csv",
                                "options" => array("fields" => array("000001" => array("optype" => "text",
                                                                                       "term_analysis" => array("case_sensitive" => false,
@@ -109,8 +138,9 @@ class BigMLTestComparePredictionsD extends TestCase
                                                                                                                "language"=>"en"
                                                                                                                )))),
                                "data_input" => array("Type" => "ham", "Message" => "A normal message"),
-                               "centroid" => "Cluster 1",
-                               "distance" => 0.36637),
+                               "centroid" => "Cluster 0",
+                               "distance" => 0.5),
+
                     array("filename" => "data/spam.csv",
                                "options" => array("fields" => array("000001" => array("optype" => "text",
                                                                                       "term_analysis" => array("token_mode" => "full_terms_only",
@@ -119,6 +149,7 @@ class BigMLTestComparePredictionsD extends TestCase
                                "data_input" => array("Type" => "ham", "Message" => "FREE for 1st week! No1 Nokia tone 4 ur mob every week just txt NOKIA to 87077 Get txting and tell ur mates. zed POBox 36504 W45WQ norm150p/tone 16+"),
                                "centroid" => "Cluster 0",
                                "distance" => 0.5),
+
                     array("filename" => "data/spam.csv",
                                "options" => array("fields" => array("000001" => array("optype" => "text",
                                                                                       "term_analysis" => array("token_mode" => "full_terms_only",
@@ -135,8 +166,9 @@ class BigMLTestComparePredictionsD extends TestCase
                                                                                                                "language"=>"en"
                                                                                                                )))),
                                "data_input" => array("Type" => "", "Message" => ""),
-                               "centroid" => "Cluster 1",
+                               "centroid" => "Cluster 6",
                                "distance" => 0.5),
+
                      array("filename" => "data/diabetes.csv",
                                "options" => array("fields" => new stdClass()),
                                "data_input" => array("pregnancies" => 0, "plasma glucose" => 118, "blood pressure" => 84,
@@ -144,17 +176,15 @@ class BigMLTestComparePredictionsD extends TestCase
                                                      "diabetes pedigree" => 0.551, "age" => 31, "diabetes" => true),
                                "centroid" => "Cluster 3",
                                "distance" => 0.5033378686559257),
+
                      array("filename" => "data/iris_sp_chars.csv",
                                "options" => array("fields" => new stdClass()),
                                "data_input" => array("pétal.length" => 1, utf8_encode("p\xe9tal&width\x00") => 2, "sépal.length" => 1,
                                                      "sépal&width" => 2, "spécies"=> "Iris-setosa"),
                                "centroid" => "Cluster 7",
                                "distance" => 0.8752380218327035),
-	             array("filename" => "data/movies.csv",
-		           "options" => array("fields" => array("000007" => array("optype" => "items", "item_analysis" => array("separator" => "\$")))),
-			   "data_input" => array("gender" => "Female", "age_range" => "18-24", "genres" => "Adventure\$Action", "timestamp" => 993906291, "occupation"=>"K-12 student", "zipcode" => 59583, "rating" => 3),
-			   "centroid" => "Cluster 1",
-			   "distance" => 0.7294650227133437)
+
+
 		          );
 
       foreach($data as $key=>$item) {

@@ -1,4 +1,7 @@
 language: php
+php:
+  - "5.5"
+  - "7.2"
 env:
   - BML_TESTS="05_a 05_c"
   - BML_TESTS="05_b"
