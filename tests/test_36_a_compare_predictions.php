@@ -92,7 +92,7 @@ class BigMLTestDeepnets extends TestCase
          $prediction = self::$api->create_prediction($deepnet->resource, $item["data_input"]);
 
          print "The prediction is ";
-         $prediction_value = $prediction->object->prediction->$item["objective"];
+         $prediction_value = $prediction->object->prediction->{$item["objective"]};
          print_r($prediction_value);
 
 
@@ -177,7 +177,7 @@ class BigMLTestDeepnets extends TestCase
          $prediction = self::$api->create_prediction($deepnet->resource, $item["data_input"]);
 
          print "The prediction is ";
-         $prediction_value = $prediction->object->prediction->$item["objective"];
+         $prediction_value = $prediction->object->prediction->{$item["objective"]};
          print_r($prediction_value);
 
 
